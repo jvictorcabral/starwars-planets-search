@@ -8,7 +8,12 @@ function Table() {
   const [columSelect, setColumSelect] = useState('population');
   const [comparisonSelect, setComparisonSelect] = useState('maior que');
   const [inputValue, setInputValue] = useState(0);
-  const { planets, select, filterByNumber, filterByNumberFunc } = useContext(MyContext);
+  const { planets,
+    select,
+    filterByNumber,
+    selectFunc,
+    filterByNumberFunc,
+  } = useContext(MyContext);
 
   let filter = planets.filter((planet) => planet.name.includes(inputName));
   if (filterByNumber) {
@@ -31,6 +36,9 @@ function Table() {
 
   const handleClick = () => {
     filterByNumberFunc({ columSelect, comparisonSelect, inputValue });
+    const dontRepeat = select.filter((element) => element !== columSelect);
+    selectFunc(dontRepeat);
+    setColumSelect(dontRepeat[0]);
   };
 
   return (

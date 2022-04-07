@@ -20,7 +20,7 @@ function Planetprovider({ children }) {
     setPlanets(getPlanets);
   }
 
-  const useSelect = (e) => {
+  const selectFunc = (e) => {
     setSelect(e);
   };
 
@@ -32,7 +32,7 @@ function Planetprovider({ children }) {
     planets,
     select,
     filterByNumber,
-    useSelect,
+    selectFunc,
     filterByNumberFunc,
   };
 
