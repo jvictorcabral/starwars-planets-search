@@ -8,7 +8,6 @@ function Planetprovider({ children }) {
 
   async function getApi() {
     const getPlanets = await PlanetsAPI();
-    // console.log(getPlanets);
     setXablau(getPlanets);
   }
 

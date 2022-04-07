@@ -1,11 +1,23 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import MyContext from '../context/PlanetsContext';
 
+// Consegui o requisito 2 com a ajuda do George Lucas;
+
 function Table() {
+  const [inputName, setInputName] = useState([]);
   const { xablau } = useContext(MyContext);
+
+  const filter = xablau.filter((planet) => planet.name.includes(inputName));
 
   return (
     <section>
+      <input
+        type="text"
+        data-testid="name-filter"
+        value={ inputName }
+        onChange={ ({ target }) => setInputName(target.value) }
+      />
+
       <table>
         <thead>
           <tr>
@@ -26,7 +38,7 @@ function Table() {
         </thead>
 
         <tbody>
-          { xablau.map(({ name,
+          { filter.map(({ name,
             rotation_period: rotationPeriod,
             orbital_period: orbitalPeriod,
             diameter,
@@ -37,6 +49,7 @@ function Table() {
             population,
             films,
             created,
+            edited,
             url,
           }) => (
             <tr key={ name }>
@@ -51,11 +64,11 @@ function Table() {
               <td>{ population }</td>
               <td>{ films }</td>
               <td>{ created }</td>
+              <td>{ edited }</td>
               <td>{ url }</td>
 
             </tr>
           ))}
-          <td>xablau</td>
         </tbody>
       </table>
     </section>
