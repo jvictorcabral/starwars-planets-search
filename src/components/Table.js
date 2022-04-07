@@ -5,9 +5,33 @@ import MyContext from '../context/PlanetsContext';
 
 function Table() {
   const [inputName, setInputName] = useState([]);
-  const { xablau } = useContext(MyContext);
+  const [columSelect, setColumSelect] = useState('population');
+  const [comparisonSelect, setComparisonSelect] = useState('maior que');
+  const [inputValue, setInputValue] = useState(0);
+  const { planets, select, filterByNumber, filterByNumberFunc } = useContext(MyContext);
 
-  const filter = xablau.filter((planet) => planet.name.includes(inputName));
+  let filter = planets.filter((planet) => planet.name.includes(inputName));
+  if (filterByNumber) {
+    filterByNumber.forEach((element) => {
+      if (element.comparisonSelect === 'maior que') {
+        filter = filter
+          .filter((e) => Number(e[element.columSelect]) > Number(element.inputValue));
+        // return filter;
+      } else if (element.comparisonSelect === 'menor que') {
+        filter = filter
+          .filter((e) => Number(e[element.columSelect]) < Number(element.inputValue));
+        // return filter;
+      } else {
+        filter = filter
+          .filter((e) => e[element.columSelect] === element.inputValue);
+      // return filter;
+      }
+    });
+  }
+
+  const handleClick = () => {
+    filterByNumberFunc({ columSelect, comparisonSelect, inputValue });
+  };
 
   return (
     <section>
@@ -17,6 +41,40 @@ function Table() {
         value={ inputName }
         onChange={ ({ target }) => setInputName(target.value) }
       />
+      <select
+        data-testid="column-filter"
+        onChange={ ({ target }) => setColumSelect(target.value) }
+        value={ columSelect }
+      >
+        { select.map((element) => (
+          <option key={ element }>
+            { element }
+          </option>
+        )) }
+      </select>
+      <select
+        data-testid="comparison-filter"
+        onChange={ ({ target }) => setComparisonSelect(target.value) }
+        value={ comparisonSelect }
+      >
+        <option value="maior que">maior que</option>
+        <option value="menor que">menor que</option>
+        <option value="igual a">igual a</option>
+      </select>
+      <input
+        type="number"
+        data-testid="value-filter"
+        value={ inputValue }
+        onChange={ ({ target }) => setInputValue(target.value) }
+      />
+      <button
+        type="button"
+        data-testid="button-filter"
+        name="input-button"
+        onClick={ handleClick }
+      >
+        filtrar
+      </button>
 
       <table>
         <thead>

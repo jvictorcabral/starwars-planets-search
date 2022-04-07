@@ -4,19 +4,44 @@ import MyContext from './PlanetsContext';
 import PlanetsAPI from '../service/PlanetsAPI';
 
 function Planetprovider({ children }) {
-  const [xablau, setXablau] = useState([]);
+  const [planets, setPlanets] = useState([]);
+  const [select, setSelect] = useState(['population',
+    'orbital_period', 'diameter', 'rotation_period', 'surface_water']);
+  const [filterByNumber, setFilterByNumber] = useState([
+    {
+      column: 'population',
+      comparison: 'maior que',
+      value: '100000',
+    },
+  ]);
 
   async function getApi() {
     const getPlanets = await PlanetsAPI();
-    setXablau(getPlanets);
+    setPlanets(getPlanets);
   }
+
+  const useSelect = (e) => {
+    setSelect(e);
+  };
+
+  const filterByNumberFunc = (e) => {
+    setFilterByNumber((prevState) => [...prevState, e]);
+  };
+
+  const state = {
+    planets,
+    select,
+    filterByNumber,
+    useSelect,
+    filterByNumberFunc,
+  };
 
   useEffect(() => {
     getApi();
   }, []);
 
   return (
-    <MyContext.Provider value={ { xablau } }>
+    <MyContext.Provider value={ state }>
       { children }
     </MyContext.Provider>
   );
