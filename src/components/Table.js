@@ -5,12 +5,14 @@ import MyContext from '../context/PlanetsContext';
 
 function Table() {
   const [inputName, setInputName] = useState([]);
-  const [columSelect, setColumSelect] = useState('population');
+  const [columnSelect, setColumnSelect] = useState('population');
   const [comparisonSelect, setComparisonSelect] = useState('maior que');
   const [inputValue, setInputValue] = useState(0);
+
   const { planets,
     select,
     filterByNumber,
+    setFilterByNumber,
     selectFunc,
     filterByNumberFunc,
   } = useContext(MyContext);
@@ -20,25 +22,30 @@ function Table() {
     filterByNumber.forEach((element) => {
       if (element.comparisonSelect === 'maior que') {
         filter = filter
-          .filter((e) => Number(e[element.columSelect]) > Number(element.inputValue));
+          .filter((e) => Number(e[element.columnSelect]) > Number(element.inputValue));
         // return filter;
       } else if (element.comparisonSelect === 'menor que') {
         filter = filter
-          .filter((e) => Number(e[element.columSelect]) < Number(element.inputValue));
+          .filter((e) => Number(e[element.columnSelect]) < Number(element.inputValue));
         // return filter;
       } else {
         filter = filter
-          .filter((e) => e[element.columSelect] === element.inputValue);
+          .filter((e) => e[element.columnSelect] === element.inputValue);
       // return filter;
       }
     });
   }
 
   const handleClick = () => {
-    filterByNumberFunc({ columSelect, comparisonSelect, inputValue });
-    const dontRepeat = select.filter((element) => element !== columSelect);
+    filterByNumberFunc({ columnSelect, comparisonSelect, inputValue });
+    const dontRepeat = select.filter((element) => element !== columnSelect);
     selectFunc(dontRepeat);
-    setColumSelect(dontRepeat[0]);
+    setColumnSelect(dontRepeat[0]);
+  };
+
+  const removeFilter = (column) => {
+    const remove = filterByNumber.filter((data) => data.columnSelect !== column);
+    setFilterByNumber(remove);
   };
 
   return (
@@ -51,8 +58,8 @@ function Table() {
       />
       <select
         data-testid="column-filter"
-        onChange={ ({ target }) => setColumSelect(target.value) }
-        value={ columSelect }
+        onChange={ ({ target }) => setColumnSelect(target.value) }
+        value={ columnSelect }
       >
         { select.map((element) => (
           <option key={ element }>
@@ -83,6 +90,38 @@ function Table() {
       >
         filtrar
       </button>
+
+      {filterByNumber.length !== 0
+        && (filterByNumber.map((element, index) => (
+          <div key={ index } data-testid="filter">
+            <span>
+              {element.columnSelect}
+              {' '}
+              {element.comparisonSelect}
+              {' '}
+              {element.inputValue}
+            </span>
+
+            <button
+              name={ element.columnSelect }
+              type="button"
+              onClick={ () => removeFilter(element.columnSelect) }
+            >
+              X
+            </button>
+          </div>
+        )))}
+
+      {filterByNumber.length !== 0
+      && (
+        <button
+          type="button"
+          data-testid="button-remove-filters"
+          onClick={ () => setFilterByNumber([]) }
+        >
+          Remover Filtros
+        </button>
+      )}
 
       <table>
         <thead>

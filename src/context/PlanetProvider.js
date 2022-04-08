@@ -8,11 +8,11 @@ function Planetprovider({ children }) {
   const [select, setSelect] = useState(['population',
     'orbital_period', 'diameter', 'rotation_period', 'surface_water']);
   const [filterByNumber, setFilterByNumber] = useState([
-    {
-      column: 'population',
-      comparison: 'maior que',
-      value: '100000',
-    },
+    // {
+    //   column: 'population',
+    //   comparison: 'maior que',
+    //   value: '100000',
+    // },
   ]);
 
   async function getApi() {
@@ -32,6 +32,7 @@ function Planetprovider({ children }) {
     planets,
     select,
     filterByNumber,
+    setFilterByNumber,
     selectFunc,
     filterByNumberFunc,
   };
