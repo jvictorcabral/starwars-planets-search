@@ -1,13 +1,19 @@
 import React, { useContext, useState } from 'react';
 import MyContext from '../context/PlanetsContext';
+import OrderFilter from './OrderFilter';
+// import OrderFilter from './OrderFilter';
 
 // Consegui o requisito 2 com a ajuda do George Lucas;
+// Consegui o requisito 7 com a ajuda do George Lucas tambem;
 
 function Table() {
   const [inputName, setInputName] = useState([]);
   const [columnSelect, setColumnSelect] = useState('population');
   const [comparisonSelect, setComparisonSelect] = useState('maior que');
   const [inputValue, setInputValue] = useState(0);
+  const [firstInput, setFirstInput] = useState('population');
+  const [secondInput, setSecondInput] = useState('ASC');
+  const [order, setOrder] = useState({ column: 'name', sort: 'ASC' });
 
   const { planets,
     select,
@@ -36,6 +42,8 @@ function Table() {
     });
   }
 
+  OrderFilter(filter, order);
+
   const handleClick = () => {
     filterByNumberFunc({ columnSelect, comparisonSelect, inputValue });
     const dontRepeat = select.filter((element) => element !== columnSelect);
@@ -43,9 +51,9 @@ function Table() {
     setColumnSelect(dontRepeat[0]);
   };
 
-  const removeFilter = (column) => {
-    const remove = filterByNumber.filter((data) => data.columnSelect !== column);
-    setFilterByNumber(remove);
+  const HandleDeleteFilter = (column) => {
+    const removeFilter = filterByNumber.filter((data) => data.columnSelect !== column);
+    setFilterByNumber(removeFilter);
   };
 
   return (
@@ -91,6 +99,53 @@ function Table() {
         filtrar
       </button>
 
+      <div>
+        <select
+          data-testid="column-sort"
+          onChange={ ({ target }) => setFirstInput(target.value) }
+          value={ firstInput }
+        >
+          <option>population</option>
+          <option>orbital_period</option>
+          <option>diameter</option>
+          <option>rotation_period</option>
+          <option>surface_water</option>
+        </select>
+
+        <label htmlFor="ASC">
+          <input
+            type="radio"
+            id="ASC"
+            name="sort"
+            onChange={ ({ target }) => setSecondInput(target.value) }
+            data-testid="column-sort-input-asc"
+            value="ASC"
+            defaultChecked
+          />
+          <span>Ascendente</span>
+        </label>
+
+        <label htmlFor="DESC">
+          <input
+            id="DESC"
+            type="radio"
+            name="sort"
+            onChange={ ({ target }) => setSecondInput(target.value) }
+            data-testid="column-sort-input-desc"
+            value="DESC"
+          />
+          <span>Descendente</span>
+        </label>
+
+        <button
+          data-testid="column-sort-button"
+          type="button"
+          onClick={ () => setOrder({ column: firstInput, sort: secondInput }) }
+        >
+          Ordenar
+        </button>
+      </div>
+
       {filterByNumber.length !== 0
         && (filterByNumber.map((element, index) => (
           <div key={ index } data-testid="filter">
@@ -105,7 +160,7 @@ function Table() {
             <button
               name={ element.columnSelect }
               type="button"
-              onClick={ () => removeFilter(element.columnSelect) }
+              onClick={ () => HandleDeleteFilter(element.columnSelect) }
             >
               X
             </button>
@@ -113,15 +168,15 @@ function Table() {
         )))}
 
       {filterByNumber.length !== 0
-      && (
-        <button
-          type="button"
-          data-testid="button-remove-filters"
-          onClick={ () => setFilterByNumber([]) }
-        >
-          Remover Filtros
-        </button>
-      )}
+          && (
+            <button
+              type="button"
+              data-testid="button-remove-filters"
+              onClick={ () => setFilterByNumber([]) }
+            >
+              Remover Filtros
+            </button>
+          )}
 
       <table>
         <thead>
@@ -158,7 +213,7 @@ function Table() {
             url,
           }) => (
             <tr key={ name }>
-              <td>{ name }</td>
+              <td data-testid="planet-name">{ name }</td>
               <td>{ rotationPeriod }</td>
               <td>{ orbitalPeriod }</td>
               <td>{ diameter }</td>
